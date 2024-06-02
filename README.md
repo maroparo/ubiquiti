@@ -1,6 +1,15 @@
 # Ubiquiti Assignment
 
-This project is a React application built with TypeScript and Vite. It uses the `@vitejs/plugin-react` for Fast Refresh and `vite-plugin-svgr` for handling SVGs. The project is set up with ESLint for linting and Prettier for code formatting.
+### A few notes to the reviewers
+
+This project is a React application built with TypeScript and Vite. It uses the `@vitejs/plugin-react` for Fast Refresh and `vite-plugin-svgr` for handling SVGs. The project is set up with ESLint for linting and Prettier for code formatting. The project uses a combination of `vitest` and `react-testing-library` for testing.
+It uses a pre-commit hook with Husky to run type checks, linting, formatting and testing committing. The same jobs in the same order are run on the CI pipeline using Github Actions. When a new release is created, the app will deploy to Github Pages which is a separate workflow. 
+
+#### What can be done to further improve the project:
+- Add more tests to increase the coverage over the components
+- Save filters as URL parameters to preserve state when navigating between routes and allow users to share the app
+- Add more support for accessibility (I didn't prioritize this because the app is supposed to be used as an internal tool)
+- Add some more animations to make the app more interactive
 
 ## Installation
 
