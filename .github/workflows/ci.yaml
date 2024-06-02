@@ -1,0 +1,41 @@
+  name: CI
+
+  on:
+    push:
+      branches:
+        - '**'
+
+  jobs:
+    lint:
+      name: Type check, lint and format
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+
+        - name: Setup Node
+          uses: actions/setup-node@v4
+          with:
+            node-version: 18
+
+        - run: yarn install
+
+        - name: Check types
+          run: yarn run type-check && yarn run lint --fix && yarn run format
+
+    test:
+      name: Test
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+
+        - name: Setup Node
+          uses: actions/setup-node@v4
+          with:
+            node-version: 18
+
+        - run: yarn install
+
+        - name: Test
+          run: yarn run test:ci
