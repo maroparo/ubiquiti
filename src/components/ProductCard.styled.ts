@@ -8,6 +8,7 @@ export const ProductCardStyled = styled(Link)`
   display: flex;
   flex-direction: column;
   height: 190px;
+  min-width: 215px;
   border: 1px solid ${({ theme }) => theme.color.lightGrey6};
   border-radius: ${({ theme }) => theme.borderRadius.m};
   overflow: hidden;

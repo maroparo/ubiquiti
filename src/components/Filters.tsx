@@ -1,13 +1,11 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import { useDevices } from 'data/queries/useDevices.tsx'
 import { Device } from 'data/types.ts'
 import { usePopover } from 'hooks/usePopover.ts'
-import { useToggleValues } from 'hooks/useToggleValues.ts'
 import {
   DeviceFilters,
   displayOptions,
-  initialDeviceFilters,
 } from 'pages/Home/hooks/useFilterDevices.ts'
 
 import { Button } from './Button.tsx'
@@ -17,48 +15,47 @@ import { MenuItem, PopoverMenu } from './PopoverMenu.tsx'
 import { SearchBox } from './SearchBox.tsx'
 
 interface FiltersProps {
-  onFiltersChange: (filters: DeviceFilters) => void
+  onFiltersChange: (filters: Partial<DeviceFilters>) => void
+  filters: DeviceFilters
 }
 
-export const Filters = ({ onFiltersChange }: FiltersProps) => {
+export const Filters = ({ onFiltersChange, filters }: FiltersProps) => {
   const { data, isLoading } = useDevices()
 
-  const [filters, setFilters] = useState<DeviceFilters>(initialDeviceFilters)
+  const handleSearchTermChange = (searchTerm: string) => {
+    onFiltersChange({ searchTerm })
+  }
 
-  useEffect(() => onFiltersChange(filters), [filters, onFiltersChange])
+  const handleDisplayOptionChange = (displayOption: string) => {
+    onFiltersChange({ displayOption })
+  }
 
-  const [selectedProductLines, toggleSelectedProductLines] = useToggleValues([])
+  const toggleProductLine = useCallback(
+    (lineId: string) => {
+      const { selectedProductLines } = filters
 
-  const filtersOptions = useMemo(() => {
-    return aggregateFiltersFromDevicesList(data?.devices)
-  }, [data])
+      const productLines = !selectedProductLines.includes(lineId)
+        ? [...selectedProductLines, lineId]
+        : selectedProductLines.filter((id) => id !== lineId)
 
-  const filterOptions: MenuItem[] = useMemo(() => {
+      onFiltersChange({ selectedProductLines: productLines })
+    },
+    [filters, onFiltersChange],
+  )
+
+  const devicesOptions: MenuItem[] = useMemo(() => {
     if (!data) {
       return []
     }
 
-    return filtersOptions.map(({ label, value }) => ({
-      label,
-      checked: selectedProductLines.includes(value),
-      onClick: () => toggleSelectedProductLines(value),
-    }))
-  }, [data, filtersOptions, selectedProductLines, toggleSelectedProductLines])
-
-  useEffect(() => {
-    setFilters((prevFilters) => ({
-      ...prevFilters,
-      selectedProductLines,
-    }))
-  }, [selectedProductLines])
-
-  const handleSearchTermChange = (searchTerm: string) => {
-    setFilters((prevFilters) => ({ ...prevFilters, searchTerm }))
-  }
-
-  const handleDisplayOptionChange = (displayOption: string) => {
-    setFilters((prevFilters) => ({ ...prevFilters, displayOption }))
-  }
+    return aggregateFiltersFromDevicesList(data.devices).map(
+      ({ label, value }) => ({
+        label,
+        checked: filters.selectedProductLines.includes(value),
+        onClick: () => toggleProductLine(value),
+      }),
+    )
+  }, [data, filters.selectedProductLines, toggleProductLine])
 
   const {
     isOpen: isFilterMenuOpen,
@@ -68,13 +65,22 @@ export const Filters = ({ onFiltersChange }: FiltersProps) => {
 
   return (
     <FiltersStyled>
-      <SearchBox onSearchTermChange={handleSearchTermChange} />
+      <SearchBox
+        value={filters.searchTerm}
+        onSearchTermChange={handleSearchTermChange}
+      />
       <RightAdornment>
         <IconRadioButtons
           options={displayOptions}
           onChange={handleDisplayOptionChange}
+          value={filters.displayOption}
         />
         <PopoverMenu
+          title="Filter"
+          menuHeader="Product Line"
+          items={devicesOptions}
+          isOpen={isFilterMenuOpen}
+          onClose={onFilterMenuClose}
           from={
             <Button
               title="Filter"
@@ -84,11 +90,6 @@ export const Filters = ({ onFiltersChange }: FiltersProps) => {
               onClick={onFilterMenuClick}
             />
           }
-          title="Filter"
-          menuHeader="Product Line"
-          items={filterOptions}
-          isOpen={isFilterMenuOpen}
-          onClose={onFilterMenuClose}
         />
       </RightAdornment>
     </FiltersStyled>

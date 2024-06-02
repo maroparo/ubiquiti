@@ -7,7 +7,6 @@ It uses a pre-commit hook with Husky to run type checks, linting, formatting and
 
 #### What can be done to further improve the project:
 - Add more tests to increase the coverage over the components
-- Save filters as URL parameters to preserve state when navigating between routes and allow users to share the app
 - Add more support for accessibility (I didn't prioritize this because the app is supposed to be used as an internal tool)
 - Add some more animations to make the app more interactive
 

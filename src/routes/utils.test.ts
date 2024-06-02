@@ -1,11 +1,13 @@
 import { routes } from 'routes/index.tsx'
 import {
   canGoBack,
+  fromQueryParams,
   generatePath,
   getRoute,
   getRoutePath,
   getStatusCodeMessage,
   statusCodeMessages,
+  toQueryParams,
 } from 'routes/utils.ts'
 
 describe('getRoute', () => {
@@ -80,5 +82,41 @@ describe('canGoBack', () => {
 
     const result = canGoBack()
     expect(result).toBe(false)
+  })
+})
+
+describe('toQueryParams', () => {
+  it('should correctly convert an object with string and array values into a record of strings', () => {
+    const filters = {
+      searchTerm: 'test',
+      selectedProductLines: ['line1', 'line2'],
+    }
+
+    const result = toQueryParams(filters)
+    expect(result).toEqual({
+      searchTerm: 'test',
+      selectedProductLines: 'line1,line2,',
+    })
+  })
+})
+
+describe('fromQueryParams', () => {
+  it('should correctly convert URLSearchParams with string values into a record of strings', () => {
+    const params = new URLSearchParams()
+    params.set('searchTerm', 'test')
+
+    const result = fromQueryParams(params)
+    expect(result).toEqual({
+      searchTerm: 'test',
+    })
+  })
+
+  it('should correctly convert URLSearchParams with comma-separated values into a record of string arrays', () => {
+    const params = new URLSearchParams('selectedProductLines=line1,line2')
+
+    const result = fromQueryParams(params)
+    expect(result).toEqual({
+      selectedProductLines: ['line1', 'line2'],
+    })
   })
 })

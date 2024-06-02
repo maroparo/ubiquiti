@@ -4,6 +4,7 @@ import { isEqual } from 'lodash'
 
 import { useDevices } from 'data/queries/useDevices.tsx'
 import { Device } from 'data/types.ts'
+import { useQueryParameters } from 'hooks/useQueryParams.ts'
 import { IconSelectOption } from 'utils/types.ts'
 
 export type DeviceFilters = {
@@ -24,9 +25,13 @@ export const initialDeviceFilters: DeviceFilters = {
 }
 
 export const useFilterDevices = () => {
+  const { queryParams, setQueryParams } = useQueryParameters<DeviceFilters>()
   const { data, ...other } = useDevices()
 
-  const [filters, setFilters] = useState<DeviceFilters>(initialDeviceFilters)
+  const [filters, setFilters] = useState<DeviceFilters>({
+    ...initialDeviceFilters,
+    ...queryParams,
+  })
 
   const filteredDevices = useMemo(() => {
     if (!data) return []
@@ -41,11 +46,19 @@ export const useFilterDevices = () => {
     return searchByTerm(devices, searchTerm)
   }, [data, filters])
 
+  const handleOnChangeFilters = (newFilters: Partial<DeviceFilters>) => {
+    setFilters((prevFilters) => {
+      const filters = { ...prevFilters, ...newFilters }
+      setQueryParams(filters)
+      return filters
+    })
+  }
+
   return {
     ...other,
-    devices: filteredDevices,
-    onChange: setFilters,
     filters,
+    devices: filteredDevices,
+    onChange: handleOnChangeFilters,
     isFiltering: !isEqual(filters, initialDeviceFilters),
   }
 }

@@ -7,19 +7,19 @@ export const ProductsGridStyled = styled.div`
   grid-template-columns: repeat(5, 1fr);
   gap: ${spacing(3)};
 
-  @media (max-width: ${({ theme }) => theme.breakpoints.laptop}) {
+  @media (max-width: ${({ theme }) => theme.breakpoints.laptopL}) {
     grid-template-columns: repeat(4, 1fr);
   }
 
-  @media (max-width: ${({ theme }) => theme.breakpoints.tabletM}) {
+  @media (max-width: ${({ theme }) => theme.breakpoints.tabletL}) {
     grid-template-columns: repeat(3, 1fr);
   }
 
-  @media (max-width: ${({ theme }) => theme.breakpoints.tabletS}) {
+  @media (max-width: ${({ theme }) => theme.breakpoints.tabletM}) {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  @media (max-width: ${({ theme }) => theme.breakpoints.mobileM}) {
+  @media (max-width: ${({ theme }) => theme.breakpoints.mobileL}) {
     grid-template-columns: repeat(1, 1fr);
   }
 `
