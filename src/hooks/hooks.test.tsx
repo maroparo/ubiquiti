@@ -5,7 +5,6 @@ import { useLoadMore } from './useLoadMore'
 import { usePopover } from './usePopover.ts'
 import { usePrevious } from './usePrevious.ts'
 import { useSetPageTitle } from './useSetPageTitle.ts'
-import { useToggleValues } from './useToggleValues'
 
 describe('useLoadMore', () => {
   it('should initially display the first batch of items', () => {
@@ -107,25 +106,5 @@ describe('useSetPageTitle', () => {
     renderHook(() => useSetPageTitle('Test Title'))
 
     expect(document.title).toBe('Test Title')
-  })
-})
-
-describe('useToggleValues', () => {
-  it('should toggle values correctly', () => {
-    const { result } = renderHook(() => useToggleValues(['test1']))
-
-    expect(result.current[0]).toEqual(['test1'])
-
-    act(() => {
-      result.current[1]('test2')
-    })
-
-    expect(result.current[0]).toEqual(['test1', 'test2'])
-
-    act(() => {
-      result.current[1]('test1')
-    })
-
-    expect(result.current[0]).toEqual(['test2'])
   })
 })

@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
 
 import { useTheme } from 'styled-components'
 
@@ -14,18 +14,19 @@ import {
 interface IconRadioButtonsProps {
   options: IconSelectOption[]
   onChange: (value: SelectOption['value']) => void
+  value?: string
 }
 
 export const IconRadioButtons = ({
   options,
   onChange,
+  value,
 }: IconRadioButtonsProps) => {
   const { color } = useTheme()
-  const [selectedValue, setSelectedValue] = useState(options[0].value)
 
   const renderIcon = useCallback(
-    ({ value, label, iconName }: IconSelectOption) => {
-      const isSelected = selectedValue === value
+    ({ value: optionValue, label, iconName }: IconSelectOption) => {
+      const isSelected = optionValue === value
 
       const outlineIcon = `${iconName}-outlined` as IconProps['name']
       const outlineIconExists = iconExists(outlineIcon)
@@ -35,18 +36,17 @@ export const IconRadioButtons = ({
         <IconButtonStyled
           $selected={isSelected}
           disabled={isSelected}
-          key={value}
+          key={optionValue}
           title={label}
           iconName={icon}
           color={color.grey}
           onClick={() => {
-            setSelectedValue(value)
-            onChange(value)
+            onChange(optionValue)
           }}
         />
       )
     },
-    [color, onChange, selectedValue],
+    [color.grey, onChange, value],
   )
 
   return (

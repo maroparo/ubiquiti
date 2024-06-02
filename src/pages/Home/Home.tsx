@@ -26,7 +26,7 @@ export const Home = () => {
 
   return (
     <>
-      <Filters onFiltersChange={onChange} />
+      <Filters filters={filters} onFiltersChange={onChange} />
       <PageContainerStyled isLoading={isLoading}>
         <ProductDisplay
           devices={itemsOnDisplay}

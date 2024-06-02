@@ -1,6 +1,8 @@
 import { generatePath as _generatePath } from 'react-router-dom'
 
 import { routes } from './index.tsx'
+import { isArray } from 'lodash'
+import { GenericObject } from '/utils/types.ts'
 
 type StatusCodeMessageMap = {
   [code: number]: string
@@ -39,4 +41,38 @@ export const getRoutePath = (
 
 export const canGoBack = () => {
   return window.history.state.idx !== 0
+}
+
+export function toQueryParams<T extends GenericObject>(filters: T) {
+  const params: Record<string, string> = {}
+
+  Object.entries(filters).forEach(([key, value]) => {
+    if (typeof value === 'string' && value.length > 0) {
+      params[key] = value
+    }
+
+    if (isArray(value) && value.length > 0) {
+      // This little trick ensures that the value is read as an array when the query params are parsed back
+      params[key] = value.join(',') + ','
+    }
+  })
+
+  return params
+}
+
+export function fromQueryParams<T extends GenericObject>(
+  params: URLSearchParams,
+) {
+  const filters: Record<string, string | string[]> = {}
+
+  params.forEach((value, key) => {
+    if (value.includes(',')) {
+      // In conjunction with the little trick in toQueryParams, we can now split the value back into an array
+      filters[key] = value.split(',').filter((v) => v.length > 0)
+    } else {
+      filters[key] = value
+    }
+  })
+
+  return filters as T
 }
